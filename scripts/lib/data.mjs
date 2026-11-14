@@ -93,8 +93,9 @@ export function validateIncident(inc, { tracks, categories, owasp }) {
   return errors;
 }
 
-// Evidence summary for a defense category, if the evidence agent has produced one that a human merged.
-export const loadEvidence = (id) => {
-  const f = join(DATA, 'evidence', `${id}.json`);
-  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null;
+// Evidence records for a defense category. ONLY records a human approved are ever returned to the site.
+export const loadApprovedEvidence = (id) => {
+  const f = join(DATA, 'evidence', `${id}.yaml`);
+  if (!existsSync(f)) return [];
+  return (yaml(f)?.records ?? []).filter((r) => r.status === 'approved').sort((a, b) => b.score - a.score);
 };

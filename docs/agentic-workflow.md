@@ -1,7 +1,7 @@
 # Planned agentic workflow (design only)
 
-> **Status:** the evidence agent is implemented, see [`evidence-method.md`](evidence-method.md). The intake, source-checking, taxonomy, digest, and link-check agents below remain design only.
-> Note: the implemented agent's kill switch defaults to OFF (the agent runs unless `AGENT_KILL_SWITCH=on`), unlike the default-on described below.
+> **Status:** the evidence agent is implemented, see the README section "Evidence agent". The intake, source-checking, taxonomy, digest, and link-check agents below remain design only.
+> Note: the implemented agent's kill switch is `.agent-disabled` / `AGENT_ENABLED`, and it runs by default in CI.
 
 AI agents may later help maintainers find and check incidents. They are assistants to human reviewers, never publishers. This site documents agent failures, so the agents that maintain it must be held to the same defenses it recommends.
 

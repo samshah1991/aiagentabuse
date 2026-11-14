@@ -9,3 +9,6 @@ export const normUrl = (u) => { try { const x = new URL(u); x.hash = ''; return 
 export const normText = (s) => String(s).toLowerCase().replace(/[‘’“”]/g, "'").replace(/[^a-z0-9]+/g, ' ').trim();
 export const shortHash = (s) => createHash('sha1').update(s).digest('hex').slice(0, 8);
 export const quoteInText = (quote, text) => { const q = normText(quote); return q.length >= 20 && normText(text).includes(q); };
+// Hash basis for content_sha256: the fetched text with whitespace collapsed (stable across trivial reformatting).
+export const contentHash = (text) => createHash('sha256').update(String(text).replace(/\s+/g, ' ').trim()).digest('hex');
+export const wordCount = (s) => normText(s).split(' ').filter(Boolean).length;

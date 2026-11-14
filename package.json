@@ -12,7 +12,7 @@
     "preview": "astro preview",
     "agent": "node agent/index.mjs",
     "agent:dry": "node agent/index.mjs --dry-run",
-    "test": "node --test \"agent/test/*.test.mjs\""
+    "test": "node --test \"tests/*.test.mjs\""
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { loadDefenses, loadCategories, loadEvidence } from '../lib/site';
+import EvidenceBadge from '../components/EvidenceBadge.astro';
+import { loadDefenses, loadCategories, loadApprovedEvidence } from '../lib/site';
 const defenses = loadDefenses();
 const cats = Object.fromEntries(loadCategories().map((c: any) => [c.id, c]));
 ---
@@ -13,8 +14,8 @@ const cats = Object.fromEntries(loadCategories().map((c: any) => [c.id, c]));
       <section class="card" id={d.id} aria-labelledby={`${d.id}-h`}>
         <h2 id={`${d.id}-h`}>{d.title}</h2>
         <p class="muted small">Risk: {d.risk}. OWASP: {d.owasp.join(', ')}</p>
-        {(() => { const ev = loadEvidence(d.id); return ev && (
-          <p class="small notice"><strong>Evidence: {ev.summary.grade}</strong> (score {ev.summary.score}/100 from {ev.summary.records} findings across {ev.summary.distinct_domains} independent sources; {ev.summary.direction.contradicts} contradict). Machine-scored, human-approved. <a href="/method/#evidence">How scoring works</a>.</p>
+        {(() => { const ev = loadApprovedEvidence(d.id); return ev.length > 0 && (
+          <div class="evidence"><h3>Evidence</h3><ul>{ev.map((r: any) => <li><EvidenceBadge record={r} /></li>)}</ul></div>
         ); })()}
         <ul class="checklist">{d.items.map((item: string) => <li>{item}</li>)}</ul>
         <p class="small"><strong>Prevents:</strong>{' '}

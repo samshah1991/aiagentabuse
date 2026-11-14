@@ -18,9 +18,42 @@ Incidents may also carry an OWASP risk ID (`LLM01`–`LLM10` or `ASI01`–`ASI10
 - Summaries must be paraphrased. No long quotations from sources.
 - No exploit code or working attack payloads, anywhere in the repository.
 
-## Evidence agent
+## Evidence agent: how it works and how to approve
 
-A weekly GitHub Action (`.github/workflows/evidence.yml`) researches each defense category, scores the evidence with a fixed formula, and opens a PR. **A human approves or rejects it; nothing publishes unless merged.** The only secret is `ANTHROPIC_API_KEY`. Setup, scoring formula, and safety controls: [`docs/evidence-method.md`](docs/evidence-method.md). Try it locally with `npm run agent:dry`.
+A GitHub Action (`.github/workflows/evidence-agent.yml`) runs **every Monday 03:00 UTC** and on manual trigger. For each defense category in `data/categories.yaml` it:
+
+1. **Searches** the web for up to 8 sources from the last 36 months, using Anthropic's hosted web search and web fetch tools (`agent/search.mjs`).
+2. **Extracts** one record per source. Code checks that each claim is supported by text it actually fetched, that nothing quotes more than 15 words, and that the model supplied no score (`agent/extract.mjs`, `agent/schema.mjs`). Fields it cannot verify are set to `null` and listed as unverified.
+3. **Scores** with fixed rules in `agent/score.mjs`. No AI model is involved. The rules are published at `/method#evidence-weighting`.
+4. **Opens one pull request**, "Evidence proposals: <date>", labelled `evidence-review`, with each record, its score, its source link, and the unverified list.
+
+Records are written to `data/evidence/<category>.yaml` with `status: proposed`. **Proposed records never appear on the site.** Only `status: approved` records do.
+
+### How to approve
+1. Open the PR. For each record, open the source link and confirm the claim. Also check `evidence_type` and the three true/false fields: they are model judgements and they drive the score.
+2. Edit the YAML: set `status: approved` on records you accept, and `status: rejected` (or delete) the rest.
+3. Merge. Closing the PR without merging discards everything.
+
+### Recheck
+`--recheck` re-fetches every approved source. A source that fails to load becomes `needs_recheck`; one whose content changed is re-extracted and proposed as an update. Both arrive as a PR. The agent never edits an approved record outside a PR.
+
+### Setup (once)
+1. Add the repository secret `ANTHROPIC_API_KEY`. It is the only secret.
+2. Settings → Actions → General → enable **"Allow GitHub Actions to create and approve pull requests"**.
+3. Optionally set a spend limit on the Anthropic workspace.
+
+### Run it
+- On GitHub: Actions → Evidence agent → Run workflow (inputs: `category`, `dry_run`, `recheck`).
+- Locally: `AGENT_ENABLED=true ANTHROPIC_API_KEY=... npm run agent:dry -- --category untrusted-content`. A dry run prints proposals and a score table and writes nothing.
+
+### Guardrails (enforced in code)
+- **Write allowlist:** only `data/evidence/` and `data/logs/agent-runs/`. Anything else is rejected, and again before the commit.
+- **Token cap:** `MAX_RUN_TOKENS` (default 300000). The run stops and logs the reason. Categories are processed stalest-first so a cap never starves the same ones.
+- **Kill switch:** create a file named `.agent-disabled` at the repo root, or set the repository variable `AGENT_ENABLED` to anything other than `true`. The workflow defaults it to `true`.
+- **Untrusted content:** fetched pages are data. The model has no write, shell, or GitHub tools; only hosted search and fetch.
+- **Logs:** one JSON file per run in `data/logs/agent-runs/` with model, prompt versions, sources, and token use. API keys are read from the environment only and redacted from output.
+
+Tests: `npm test` (mocked API, no key needed).
 
 ## Stack
 
@@ -39,7 +72,7 @@ npm run dev        # http://localhost:4321 (search is not available in dev mode)
 npm run build      # validate data, build to dist/, then build the search index
 npm run preview    # serve dist/ (search works here)
 npm run validate   # validate incidents, categories, evidence files
-npm test           # agent unit tests (mocked API, no key needed)
+npm test           # agent tests (mocked API, no key needed)
 ```
 
 `npm run build` fails if any incident is invalid.
@@ -100,6 +133,8 @@ public/              static files, Cloudflare _headers, client JS
 agent/               evidence agent (search, extract, score, guard, PR)
 data/categories.yaml defense categories the agent researches
 data/evidence/       agent output (merged via PR only)
+data/logs/agent-runs/ one JSON log per agent run
+tests/               tests for the evidence agent
 docs/                design docs and evidence method
 .github/ISSUE_TEMPLATE/  incident submission form
 ```

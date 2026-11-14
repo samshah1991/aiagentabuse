@@ -1,19 +1,17 @@
-// Safety rails: write-path allowlist, spend cap, kill switch. None of this relies on the model behaving.
+// Guardrails enforced in code, not in prompts: write allowlist, token cap, kill switch, quote limit, secret redaction.
 import { resolve, relative, sep, isAbsolute, dirname } from 'node:path';
-import { existsSync, mkdirSync, writeFileSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { normText } from './util.mjs';
 
 export class GuardError extends Error {}
-export class SpendCapError extends GuardError {}
+export class BudgetExhaustedError extends GuardError {}
 
-// The agent may write ONLY under these paths. The model itself has no write tools at all:
-// only Anthropic-hosted web search/fetch. All file writes are made by this code.
-export const WRITE_ALLOW = ['data/evidence'];
-
+export const WRITE_ALLOW = ['data/evidence', 'data/logs/agent-runs'];
 export function assertWritable(p, root = process.cwd()) {
   const abs = resolve(root, p);
   const rel = relative(root, abs);
   if (!rel || rel.startsWith('..') || isAbsolute(rel)) throw new GuardError(`write outside repo blocked: ${p}`);
-  if (!WRITE_ALLOW.some((a) => rel === a || rel.startsWith(a + sep))) throw new GuardError(`write path not allowlisted: ${rel}`);
+  if (!WRITE_ALLOW.some((a) => rel.startsWith(a + sep))) throw new GuardError(`write path not allowlisted: ${rel}`);
   return abs;
 }
 export function safeWrite(p, content, root = process.cwd()) {
@@ -22,53 +20,48 @@ export function safeWrite(p, content, root = process.cwd()) {
   writeFileSync(abs, content);
   return abs;
 }
-export const pathsAllowed = (paths) => paths.every((p) => { try { assertWritable(p); return true; } catch { return false; } });
+export const pathsAllowed = (paths, root) => paths.every((p) => { try { assertWritable(p, root); return true; } catch { return false; } });
 
-// Kill switch: set repository variable AGENT_KILL_SWITCH=on, or commit a file named agent/KILL_SWITCH.
-// Unset means the agent runs, so it works out of the box.
-export function killSwitchOn(env = process.env, root = process.cwd()) {
-  return /^(on|true|1|yes)$/i.test(env.AGENT_KILL_SWITCH ?? '') || existsSync(resolve(root, 'agent/KILL_SWITCH'));
+// Kill switch: exit if file .agent-disabled exists at the repo root, or AGENT_ENABLED is not exactly "true".
+// (The workflow sets AGENT_ENABLED to "true" by default, so nothing needs configuring there.)
+export function disabledReason(env = process.env, root = process.cwd()) {
+  if (existsSync(resolve(root, '.agent-disabled'))) return 'the file .agent-disabled exists at the repo root';
+  if (env.AGENT_ENABLED !== 'true') return 'AGENT_ENABLED is not "true"';
+  return null;
 }
 
-// Spend cap. USD per million tokens. TODO(owner): confirm against current Anthropic pricing; unknown models use the highest rate.
-export const PRICES = {
-  'claude-sonnet-5-5': { in: 3, out: 15, cacheWrite: 3.75, cacheRead: 0.3 },
-  _fallback: { in: 15, out: 75, cacheWrite: 18.75, cacheRead: 1.5 },
-};
-export const SEARCH_USD_PER_REQUEST = 0.01; // $10 per 1,000 searches (docs)
-export const DEFAULT_CAPS = { runUsd: 10, monthUsd: 50 };
-
-export function monthSpentFromLogs(now = new Date(), dir = 'data/evidence/_log') {
-  if (!existsSync(dir)) return 0;
-  const ym = now.toISOString().slice(0, 7);
-  let sum = 0;
-  for (const f of readdirSync(dir)) if (f.startsWith(ym) && f.endsWith('.json')) {
-    try { sum += Number(JSON.parse(readFileSync(`${dir}/${f}`, 'utf8')).total_cost_usd) || 0; } catch { /* ignore unreadable log */ }
+// Spend cap: MAX_RUN_TOKENS (default 300000) counts every input, output, and cache token across all calls.
+export const DEFAULT_MAX_RUN_TOKENS = 300000;
+export class TokenBudget {
+  constructor(env = process.env) {
+    const n = Number.parseInt(env.MAX_RUN_TOKENS ?? '', 10);
+    this.max = Number.isFinite(n) && n > 0 ? n : DEFAULT_MAX_RUN_TOKENS;
+    this.used = 0;
   }
-  return sum;
-}
-
-export class SpendTracker {
-  constructor({ runUsd, monthUsd, monthSpent = 0 } = {}, env = process.env) {
-    this.runCap = Number(runUsd ?? env.AGENT_RUN_CAP_USD ?? DEFAULT_CAPS.runUsd);
-    this.monthCap = Number(monthUsd ?? env.AGENT_MONTH_CAP_USD ?? DEFAULT_CAPS.monthUsd);
-    this.monthSpent = monthSpent;
-    this.spent = 0; this.searches = 0; this.fetches = 0;
+  add(usage = {}) {
+    this.used += (usage.input_tokens ?? 0) + (usage.output_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0);
   }
-  costOf(model, u = {}) {
-    const p = PRICES[model] ?? PRICES._fallback;
-    const t = (n, rate) => ((n ?? 0) / 1e6) * rate;
-    return t(u.input_tokens, p.in) + t(u.output_tokens, p.out) + t(u.cache_creation_input_tokens, p.cacheWrite) +
-      t(u.cache_read_input_tokens, p.cacheRead) + (u.server_tool_use?.web_search_requests ?? 0) * SEARCH_USD_PER_REQUEST;
-  }
-  add(model, usage) {
-    this.spent += this.costOf(model, usage);
-    this.searches += usage?.server_tool_use?.web_search_requests ?? 0;
-    this.fetches += usage?.server_tool_use?.web_fetch_requests ?? 0;
-  }
-  // Checked before every API call, so overshoot is bounded by a single call.
+  // Checked before every API call, so overshoot is bounded by one call.
   assertBudget() {
-    if (this.spent >= this.runCap) throw new SpendCapError(`run spend cap reached ($${this.spent.toFixed(2)} of $${this.runCap})`);
-    if (this.monthSpent + this.spent >= this.monthCap) throw new SpendCapError(`monthly spend cap reached ($${(this.monthSpent + this.spent).toFixed(2)} of $${this.monthCap})`);
+    if (this.used >= this.max) throw new BudgetExhaustedError(`token cap reached (${this.used} of MAX_RUN_TOKENS=${this.max})`);
   }
+}
+
+// No quotation longer than 15 words may be stored: reject text sharing any 16-word run with its source.
+export const MAX_QUOTE_WORDS = 15;
+export function hasLongQuote(stored, source, limit = MAX_QUOTE_WORDS) {
+  const n = limit + 1;
+  const sw = normText(source).split(' '); const tw = normText(stored).split(' ');
+  if (tw.length < n || sw.length < n) return false;
+  const grams = new Set();
+  for (let i = 0; i + n <= sw.length; i++) grams.add(sw.slice(i, i + n).join(' '));
+  for (let i = 0; i + n <= tw.length; i++) if (grams.has(tw.slice(i, i + n).join(' '))) return true;
+  return false;
+}
+
+// Never write API keys to logs or output.
+export function redact(text, env = process.env) {
+  let t = String(text).replace(/sk-ant-[A-Za-z0-9_-]{8,}/g, '[REDACTED]');
+  const k = env.ANTHROPIC_API_KEY; if (k && k.length > 8) t = t.split(k).join('[REDACTED]');
+  return t;
 }

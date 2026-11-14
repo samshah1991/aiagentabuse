@@ -102,3 +102,13 @@ dl.facts dd { margin: 0; }
 .tl-item time { font-size: .85rem; color: var(--muted); }
 .tl-item h4 { margin: .1rem 0 .25rem; font-size: 1.05rem; line-height: 1.35; }
 .legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .9rem; }
+
+/* Evidence badges */
+.evidence { margin: .75rem 0; }
+.evidence h3 { font-size: 1rem; margin: 0 0 .35rem; }
+.evidence ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .6rem; }
+.evidence-item { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem .5rem; font-size: .92rem; }
+.ev-claim { flex: 1 1 14rem; }
+a.badge { text-decoration: none; }
+.ev-strong { color: var(--sev-low); } .ev-good { color: var(--sev-low); }
+.ev-moderate { color: var(--sev-medium); } .ev-limited { color: var(--sev-high); } .ev-anecdotal { color: var(--sev-critical); }

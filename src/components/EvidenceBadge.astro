@@ -1,0 +1,13 @@
+---
+// Shows the computed weight label and evidence type for one APPROVED record, linking to its source.
+// Callers must pass only approved records (loadApprovedEvidence enforces this).
+interface Props { record: any }
+const { record: r } = Astro.props;
+if (r.status !== 'approved') throw new Error(`EvidenceBadge refuses non-approved record ${r.id}`);
+const types: Record<string, string> = { peer_reviewed: 'Peer reviewed', benchmark: 'Benchmark', vendor_claim: 'Vendor claim', practitioner: 'Practitioner' };
+---
+<span class="evidence-item">
+  <a class={`badge ev-${r.weight_label}`} href="/method/#evidence-weighting" title={`Evidence weight ${r.score} of 5. How this is scored`}>{r.weight_label}</a>
+  <span class="badge badge-plain">{types[r.evidence_type]}</span>
+  <span class="ev-claim">{r.claim} <a href={r.source.url} rel="nofollow noopener noreferrer">{r.source.title}</a>{r.source.publisher && <span class="muted"> ({r.source.publisher})</span>}</span>
+</span>

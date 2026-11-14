@@ -6,6 +6,7 @@ import { relative } from 'node:path';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { readYaml } from '../agent/util.mjs';
 import { validateEvidenceFile } from '../agent/schema.mjs';
+import { computeScore } from '../agent/score.mjs';
 import { loadTracks, loadCategories, loadOwasp, loadDefenses, incidentFiles, loadIncident, validateIncident, ROOT } from './lib/data.mjs';
 
 const taxonomy = { tracks: loadTracks(), categories: loadCategories(), owasp: loadOwasp() };
@@ -47,12 +48,22 @@ const defIds = loadDefenses().map((d) => d.id);
 const agentIds = readYaml('data/categories.yaml').map((c) => c.id);
 for (const id of defIds) if (!agentIds.includes(id)) { failed++; console.error(`✗ data/categories.yaml: missing defense "${id}"`); }
 for (const id of agentIds) if (!defIds.includes(id)) { failed++; console.error(`✗ data/categories.yaml: "${id}" is not in data/defenses.yaml`); }
-if (existsSync('data/evidence')) for (const f of readdirSync('data/evidence').filter((x) => x.endsWith('.json'))) {
+if (existsSync('data/evidence')) for (const f of readdirSync('data/evidence').filter((x) => x.endsWith('.yaml'))) {
   try {
-    const doc = JSON.parse(readFileSync(`data/evidence/${f}`, 'utf8'));
+    const doc = readYaml(`data/evidence/${f}`);
     const errs = validateEvidenceFile(doc);
-    if (f !== `${doc.category}.json`) errs.push('file name must match category');
-    if (!defIds.includes(doc.category)) errs.push(`unknown category "${doc.category}"`);
+    if (f !== `${doc?.category}.yaml`) errs.push('file name must match category');
+    if (!defIds.includes(doc?.category)) errs.push(`unknown category "${doc?.category}"`);
+    const seenIds = new Set();
+    for (const r of doc?.records ?? []) {
+      if (seenIds.has(r.id)) errs.push(`duplicate id ${r.id}`); seenIds.add(r.id);
+      if (r.category !== doc.category) errs.push(`${r.id}: category mismatch`);
+      // Scores are computed, never trusted: recompute and compare (date = accessed_date, the run date).
+      try {
+        const c = computeScore(r, new Date(`${r.source.accessed_date}T00:00:00Z`));
+        if (c.score !== r.score || c.weight_label !== r.weight_label) errs.push(`${r.id}: score/label do not match the scoring rules (expected ${c.score} ${c.weight_label})`);
+      } catch (e) { errs.push(`${r.id}: ${e.message}`); }
+    }
     if (errs.length) { failed++; console.error(`✗ data/evidence/${f}`); errs.slice(0, 5).forEach((e) => console.error(`    - ${e}`)); }
     else console.log(`✓ data/evidence/${f}`);
   } catch (e) { failed++; console.error(`✗ data/evidence/${f}: ${e.message}`); }
