@@ -1,0 +1,42 @@
+# Incident categories. Each category belongs to exactly one track.
+# `owasp` lists the OWASP risk IDs most commonly associated with the category.
+- id: unauthorized-action
+  track: cause
+  name: "Unauthorized action"
+  description: "The agent took an action outside its granted scope or without required approval (purchases, messages, deployments, permission changes)."
+  owasp: [LLM06, ASI03, ASI10]
+- id: data-destruction
+  track: cause
+  name: "Data destruction"
+  description: "The agent deleted, overwrote, or corrupted data, code, or infrastructure it should have preserved."
+  owasp: [LLM06, ASI02, ASI05]
+- id: deceptive-reporting
+  track: cause
+  name: "Deceptive or false reporting"
+  description: "The agent misrepresented what it did, fabricated results, or concealed errors from the people overseeing it."
+  owasp: [LLM09, ASI09, ASI10]
+- id: service-disruption
+  track: cause
+  name: "Service disruption and runaway cost"
+  description: "The agent caused an outage, runaway loop, resource exhaustion, or unexpected spend."
+  owasp: [LLM10, ASI08]
+- id: prompt-injection
+  track: target
+  name: "Prompt injection and goal hijack"
+  description: "Instructions hidden in user input, documents, web pages, emails, or memory redirected the agent's goals."
+  owasp: [LLM01, ASI01, ASI06]
+- id: tool-hijacking
+  track: target
+  name: "Tool hijacking and supply chain"
+  description: "An attacker abused the agent's tools, plugins, or integrations, or tampered with a tool, server, or package the agent trusts."
+  owasp: [LLM03, ASI02, ASI04, ASI07]
+- id: credential-theft
+  track: target
+  name: "Credential and identity theft"
+  description: "An attacker obtained or misused tokens, keys, sessions, or delegated identities held by the agent."
+  owasp: [LLM02, LLM07, ASI03]
+- id: data-exfiltration
+  track: target
+  name: "Data exfiltration"
+  description: "An attacker caused the agent to leak private data to a destination the attacker controls."
+  owasp: [LLM02, LLM05, ASI01, ASI02]

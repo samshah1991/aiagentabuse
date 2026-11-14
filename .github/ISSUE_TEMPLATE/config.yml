@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability in a product
+    url: https://aiagentabuse.com/submit/
+    about: Do not report unpatched vulnerabilities here. Disclose them to the vendor first.

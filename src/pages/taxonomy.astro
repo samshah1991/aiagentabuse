@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadTracks, loadCategories, loadOwasp, loadDefenses } from '../lib/site';
+const tracks = loadTracks();
+const categories = loadCategories();
+const owasp = loadOwasp();
+const defenses = loadDefenses();
+const lists = [
+  { id: 'llm', name: 'OWASP Top 10 for LLM Applications (2025)' },
+  { id: 'asi', name: 'OWASP Top 10 for Agentic Applications' },
+];
+---
+<Base title="Taxonomy" description="The two incident tracks, eight incident categories, and how they map to OWASP LLM and Agentic Top 10 risk IDs.">
+  <h1>Taxonomy</h1>
+  <p class="prose">Every incident has exactly one track and one category, and may carry one OWASP risk ID where it applies. The source of truth is <code>data/taxonomy/</code> in the repository.</p>
+
+  <h2>Tracks</h2>
+  <div class="cards">
+    {tracks.map((t: any) => (
+      <div class={`card ${t.id}`} id={t.id}><h3>{t.name} <code>{t.id}</code></h3><p>{t.description}</p></div>
+    ))}
+  </div>
+
+  <h2>Categories</h2>
+  {tracks.map((t: any) => (
+    <>
+      <h3>{t.name}</h3>
+      <div class="table-scroll"><table>
+        <thead><tr><th scope="col">Category</th><th scope="col">Description</th><th scope="col">OWASP</th><th scope="col">Defenses</th></tr></thead>
+        <tbody>
+          {categories.filter((c: any) => c.track === t.id).map((c: any) => (
+            <tr id={`cat-${c.id}`}>
+              <td><strong>{c.name}</strong><br /><code>{c.id}</code></td>
+              <td>{c.description}</td>
+              <td>{c.owasp.join(', ')}</td>
+              <td>{defenses.filter((d: any) => d.prevents.includes(c.id)).map((d: any, n: number) => <>{n > 0 && <br />}<a href={`/defenses/#${d.id}`}>{d.title}</a></>)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table></div>
+    </>
+  ))}
+
+  <h2 id="owasp">OWASP mapping</h2>
+  <p class="prose">Accepted values for <code>owasp_id</code>, and which of our categories commonly map to each. The mapping is editorial; an incident's own <code>owasp_id</code> takes precedence.</p>
+  {lists.map((l) => (
+    <>
+      <h3>{l.name}</h3>
+      <div class="table-scroll"><table>
+        <thead><tr><th scope="col">ID</th><th scope="col">Risk</th><th scope="col">Related categories</th></tr></thead>
+        <tbody>
+          {owasp.filter((o: any) => o.list === l.id).map((o: any) => {
+            const rel = categories.filter((c: any) => c.owasp.includes(o.id));
+            return <tr><td><code>{o.id}</code></td><td>{o.name}</td><td>{rel.length ? rel.map((c: any) => c.name).join(', ') : <span class="muted">None yet</span>}</td></tr>;
+          })}
+        </tbody>
+      </table></div>
+    </>
+  ))}
+</Base>

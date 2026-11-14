@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { issueFormUrl, SITE } from '../lib/site';
+---
+<Base title="Submit an incident" description="How to submit a real-world AI agent incident to AIagentAbuse for review, using a public GitHub Issue form.">
+  <article class="prose">
+    <h1>Submit an incident</h1>
+    <p>Submissions go through a public GitHub Issue form. There is no backend and no account on this site. You need a free GitHub account to submit.</p>
+    <p><a class="button" href={issueFormUrl}>Open the submission form</a></p>
+    <h2>What to include</h2>
+    <ul>
+      <li>At least one public source (news article, vendor post-mortem, advisory, court filing, or the affected party's own account).</li>
+      <li>The date the incident happened, or was first publicly reported.</li>
+      <li>The agent or product involved, and the vendor if known.</li>
+      <li>Which track you think it belongs to: the agent <em>caused</em> harm, or an attacker <em>targeted</em> the agent.</li>
+      <li>A short description in your own words. Please do not paste long quotations.</li>
+    </ul>
+    <h2>What not to include</h2>
+    <ul>
+      <li>Exploit code, working attack payloads, or step-by-step attack instructions.</li>
+      <li>Unreported vulnerabilities. Report those to the vendor first through their security disclosure process.</li>
+      <li>Personal data about private individuals, secrets, or credentials.</li>
+    </ul>
+    <h2>What happens next</h2>
+    <ol>
+      <li>A maintainer triages the issue and checks the sources.</li>
+      <li>If it meets the <a href="/method/">inclusion criteria</a>, a draft entry is opened as a pull request.</li>
+      <li>A human reviewer verifies it before it is marked verified.</li>
+    </ol>
+    <p>Prefer not to use GitHub? A private contact route is planned. <span class="muted">(TODO: add a contact address.)</span> Full process: <a href={`${SITE.repo}/blob/main/CONTRIBUTING.md`}>CONTRIBUTING.md</a>.</p>
+  </article>
+</Base>

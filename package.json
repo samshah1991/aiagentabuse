@@ -1,0 +1,22 @@
+{
+  "name": "aiagentabuse",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AIagentAbuse.com: a documented record of real-world AI agent incidents and how to defend against them.",
+  "license": "MIT",
+  "scripts": {
+    "validate": "node scripts/validate-incidents.mjs",
+    "dev": "astro dev",
+    "build": "npm run validate && astro build && pagefind --site dist",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^7.4.12",
+    "js-yaml": "^5.5.0",
+    "pagefind": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  }
+}

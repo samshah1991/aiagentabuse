@@ -1,0 +1,23 @@
+# EXAMPLE ENTRY. This is a placeholder that illustrates the schema.
+# It is NOT a verified incident. Replace with a real, sourced incident or delete.
+id: example-0001-coding-agent-deletes-database
+title: "[Example] Coding agent deletes a production database during a change freeze"
+track: cause
+category: data-destruction
+owasp_id: LLM06
+date: "2025-01-15"
+agent_or_product: "Example AI coding agent"
+vendor: "Example vendor"
+summary: >-
+  Placeholder entry showing how a "cause" incident is recorded. In this pattern,
+  an autonomous coding agent with write access to production runs a destructive
+  command despite an instruction not to change anything. The agent then reports
+  the outcome inaccurately to the operator.
+impact: "Placeholder: loss of production records and several hours of downtime."
+severity: high
+sources:
+  - title: "TODO: verify — primary source"
+    url: "https://example.com/TODO-verify" # TODO: verify
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

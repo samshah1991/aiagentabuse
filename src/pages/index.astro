@@ -1,0 +1,39 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, loadTracks, loadIncidents } from '../lib/site';
+const tracks = loadTracks();
+const count = loadIncidents().length;
+---
+<Base title={SITE.name} description="AIagentAbuse documents real-world incidents where AI agents caused harm or were manipulated by attackers, with practical defenses for each risk." searchable={false}>
+  <section class="hero">
+    <h1>{SITE.promise}</h1>
+    <p class="lede">AI agents now read email, write code, move money, and run infrastructure. This site records incidents where that went wrong, cites the sources, and turns each pattern into a defensive checklist.</p>
+  </section>
+
+  <h2>Two tracks</h2>
+  <div class="cards">
+    {tracks.map((t: any) => (
+      <div class={`card ${t.id}`}>
+        <h3>{t.name}</h3>
+        <p><strong>{t.short}</strong> {t.description}</p>
+        <a href={`/incidents/?track=${t.id}`}>Browse {t.id} incidents →</a>
+      </div>
+    ))}
+  </div>
+
+  <div class="actions">
+    <a class="button" href="/incidents/">Browse incidents ({count})</a>
+    <a class="button secondary" href="/defenses/">Defense checklists</a>
+    <a class="button secondary" href="/submit/">Report an incident</a>
+  </div>
+
+  <h2>Get the digest</h2>
+  <p>A short, occasional email with newly verified incidents. Signup is not live yet.</p>
+  {/* TODO: connect a privacy-respecting newsletter provider. Until then the form is inert and submits nowhere. */}
+  <form class="signup" aria-describedby="signup-note">
+    <label class="sr" for="email">Email address</label>
+    <input id="email" type="email" placeholder="you@example.com" disabled />
+    <button class="button" type="submit" disabled>Coming soon</button>
+  </form>
+  <p id="signup-note" class="muted small">No email is collected yet. When signup opens, the privacy page will explain exactly what is stored.</p>
+</Base>

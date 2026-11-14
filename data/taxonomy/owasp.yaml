@@ -1,0 +1,24 @@
+# OWASP risk IDs accepted in incident `owasp_id`.
+# LLM01-LLM10: OWASP Top 10 for LLM Applications (2025 edition).
+# ASI01-ASI10: OWASP Top 10 for Agentic Applications (2026 edition).
+# TODO: verify names against the current published lists before launch.
+- { id: LLM01, list: llm, name: "Prompt Injection" }
+- { id: LLM02, list: llm, name: "Sensitive Information Disclosure" }
+- { id: LLM03, list: llm, name: "Supply Chain" }
+- { id: LLM04, list: llm, name: "Data and Model Poisoning" }
+- { id: LLM05, list: llm, name: "Improper Output Handling" }
+- { id: LLM06, list: llm, name: "Excessive Agency" }
+- { id: LLM07, list: llm, name: "System Prompt Leakage" }
+- { id: LLM08, list: llm, name: "Vector and Embedding Weaknesses" }
+- { id: LLM09, list: llm, name: "Misinformation" }
+- { id: LLM10, list: llm, name: "Unbounded Consumption" }
+- { id: ASI01, list: asi, name: "Agent Goal Hijack" }
+- { id: ASI02, list: asi, name: "Tool Misuse and Exploitation" }
+- { id: ASI03, list: asi, name: "Identity and Privilege Abuse" }
+- { id: ASI04, list: asi, name: "Agentic Supply Chain Vulnerabilities" }
+- { id: ASI05, list: asi, name: "Unexpected Code Execution" }
+- { id: ASI06, list: asi, name: "Memory and Context Poisoning" }
+- { id: ASI07, list: asi, name: "Insecure Inter-Agent Communication" }
+- { id: ASI08, list: asi, name: "Cascading Failures" }
+- { id: ASI09, list: asi, name: "Human-Agent Trust Exploitation" }
+- { id: ASI10, list: asi, name: "Rogue Agents" }

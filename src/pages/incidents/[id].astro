@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import Badge from '../../components/Badge.astro';
+import { loadIncidents, loadCategories, loadTracks, loadOwasp, loadDefenses, fmtDate, issueFormUrl } from '../../lib/site';
+
+export function getStaticPaths() {
+  return loadIncidents().map((incident: any) => ({ params: { id: incident.id }, props: { incident } }));
+}
+const { incident: i } = Astro.props as any;
+const category = loadCategories().find((c: any) => c.id === i.category);
+const track = loadTracks().find((t: any) => t.id === i.track);
+const owasp = i.owasp_id ? loadOwasp().find((o: any) => o.id === i.owasp_id) : null;
+const defenses = loadDefenses().filter((d: any) => d.prevents.includes(i.category));
+const year = i.date.slice(0, 4);
+const description = i.summary.split(/(?<=[.!?])\s+/)[0].slice(0, 155);
+---
+<Base title={i.title} description={description}>
+  <article class="prose">
+    <p class="small" data-pagefind-ignore><a href="/incidents/">← All incidents</a></p>
+    <h1>{i.title}</h1>
+    <div class="badges">
+      <Badge kind="track" value={i.track} label={track.name} />
+      <Badge kind="severity" value={i.severity} label={`Severity: ${i.severity}`} />
+      <Badge kind="status" value={i.verification_status} label={i.verification_status === 'draft' ? 'Draft: unverified' : i.verification_status} />
+    </div>
+    {i.verification_status === 'draft' && (
+      <div class="notice" role="note"><strong>Draft, not verified.</strong> This entry has not been checked by a human reviewer. Do not rely on or cite it. See the <a href="/method/">method</a>.</div>
+    )}
+    {i.verification_status === 'corrected' && (
+      <div class="notice" role="note"><strong>Corrected.</strong> This entry was updated after publication. See the <a href="/method/#corrections">corrections policy</a>.</div>
+    )}
+
+    <h2>Summary</h2>
+    <p>{i.summary}</p>
+    <h2>Impact</h2>
+    <p>{i.impact}</p>
+
+    <h2>Details</h2>
+    <dl class="facts">
+      <dt>Date</dt><dd><time datetime={i.date}>{fmtDate(i.date)}</time></dd>
+      <dt>Agent or product</dt><dd>{i.agent_or_product}</dd>
+      {i.vendor && <><dt>Vendor</dt><dd>{i.vendor}</dd></>}
+      <dt>Track</dt><dd><a href={`/taxonomy/#${i.track}`}>{track.name}</a></dd>
+      <dt>Category</dt><dd><a href={`/taxonomy/#cat-${i.category}`}>{category.name}</a></dd>
+      {owasp && <><dt>OWASP</dt><dd>{owasp.id}: {owasp.name}</dd></>}
+      <dt>Status</dt><dd>{i.verification_status}</dd>
+      <dt>Last reviewed</dt><dd><time datetime={i.last_reviewed}>{fmtDate(i.last_reviewed)}</time></dd>
+    </dl>
+
+    <h2>Sources</h2>
+    <ol>
+      {i.sources.map((s: any) => (
+        <li><a href={s.url} rel="nofollow noopener noreferrer">{s.title}</a> <span class="muted small">(accessed {s.accessed})</span></li>
+      ))}
+    </ol>
+
+    {defenses.length > 0 && (
+      <>
+        <h2>Defenses</h2>
+        <ul>{defenses.map((d: any) => <li><a href={`/defenses/#${d.id}`}>{d.title}</a></li>)}</ul>
+      </>
+    )}
+
+    <p class="muted small">Spotted an error? <a href={issueFormUrl}>Request a correction</a>.</p>
+
+    <span hidden data-pagefind-filter="track">{i.track}</span>
+    <span hidden data-pagefind-filter="category">{category.name}</span>
+    <span hidden data-pagefind-filter="year">{year}</span>
+    <span hidden data-pagefind-filter="severity">{i.severity}</span>
+    <span hidden data-pagefind-meta="date">{i.date}</span>
+  </article>
+</Base>

@@ -1,0 +1,60 @@
+---
+import Base from '../../layouts/Base.astro';
+import Badge from '../../components/Badge.astro';
+import { loadIncidents, loadCategories, loadTracks, SEVERITIES, fmtDate } from '../../lib/site';
+const incidents = loadIncidents();
+const categories = loadCategories();
+const tracks = loadTracks();
+const catName = Object.fromEntries(categories.map((c: any) => [c.id, c.name]));
+const years = [...new Set(incidents.map((i: any) => i.date.slice(0, 4)))].sort().reverse();
+---
+<Base title="Incidents" description="Searchable, filterable database of real-world AI agent incidents, tagged by track, category, OWASP risk, year, and severity." searchable={false}>
+  <link slot="head" rel="stylesheet" href="/pagefind/pagefind-component-ui.css" />
+  <h1>Incidents</h1>
+  <p>Each incident is tagged with one track: the agent <a href="/taxonomy/#cause">caused harm</a>, or an attacker <a href="/taxonomy/#target">targeted the agent</a>. Entries marked <Badge kind="status" value="draft" /> have not yet been verified by a human reviewer.</p>
+
+  <h2 id="search-heading">Search</h2>
+  <div id="search" aria-labelledby="search-heading">
+    <pagefind-input placeholder="Search incidents, defenses, and method"></pagefind-input>
+    <pagefind-summary></pagefind-summary>
+    <pagefind-results hide-sub-results></pagefind-results>
+    <noscript><p class="muted">Search needs JavaScript. The full list below works without it.</p></noscript>
+  </div>
+
+  <h2 id="browse">Browse and filter</h2>
+  <form class="filters" id="filters" aria-label="Filter incidents">
+    <label>Track
+      <select name="track"><option value="">All tracks</option>{tracks.map((t: any) => <option value={t.id}>{t.name}</option>)}</select>
+    </label>
+    <label>Category
+      <select name="category"><option value="">All categories</option>{categories.map((c: any) => <option value={c.id}>{c.name}</option>)}</select>
+    </label>
+    <label>Year
+      <select name="year"><option value="">All years</option>{years.map((y) => <option value={y}>{y}</option>)}</select>
+    </label>
+    <label>Severity
+      <select name="severity"><option value="">All severities</option>{SEVERITIES.map((s: string) => <option value={s}>{s}</option>)}</select>
+    </label>
+  </form>
+  <p class="muted small" id="result-count" aria-live="polite">{incidents.length} incidents</p>
+
+  <ul class="incident-list" id="incident-list">
+    {incidents.map((i: any) => (
+      <li data-track={i.track} data-category={i.category} data-year={i.date.slice(0, 4)} data-severity={i.severity}>
+        <h3><a href={`/incidents/${i.id}/`}>{i.title}</a></h3>
+        <div class="badges">
+          <Badge kind="track" value={i.track} label={i.track === 'cause' ? 'Agent as cause' : 'Agent as target'} />
+          <Badge kind="plain" value={i.category} label={catName[i.category]} />
+          <Badge kind="severity" value={i.severity} label={`Severity: ${i.severity}`} />
+          {i.owasp_id && <Badge kind="plain" value={i.owasp_id} />}
+          {i.verification_status === 'draft' && <Badge kind="status" value="draft" label="Draft: unverified" />}
+        </div>
+        <p class="muted small"><time datetime={i.date}>{fmtDate(i.date)}</time> · {i.agent_or_product}</p>
+      </li>
+    ))}
+  </ul>
+  <p id="no-results" hidden>No incidents match these filters.</p>
+
+  <script is:inline src="/pagefind/pagefind-component-ui.js" defer></script>
+  <script is:inline src="/js/incident-filters.js" defer></script>
+</Base>

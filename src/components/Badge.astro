@@ -1,0 +1,5 @@
+---
+interface Props { kind: 'track' | 'severity' | 'status' | 'plain'; value: string; label?: string }
+const { kind, value, label } = Astro.props;
+---
+<span class={`badge badge-${kind} ${kind}-${value}`}>{label ?? value}</span>

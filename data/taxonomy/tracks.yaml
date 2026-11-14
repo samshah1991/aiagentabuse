@@ -1,0 +1,15 @@
+# The two tracks. Every incident carries exactly one.
+- id: cause
+  name: "Agent as cause"
+  short: "The agent itself caused harm."
+  description: >-
+    An AI agent acted in a way that caused harm without an attacker steering it:
+    overreaching its mandate, taking unauthorized actions, deleting or corrupting
+    data, misrepresenting what it did, or triggering outages.
+- id: target
+  name: "Agent as target"
+  short: "An attacker manipulated the agent."
+  description: >-
+    An attacker manipulated an AI agent into acting against its operator or users:
+    prompt injection, hijacking its tools, stealing credentials it holds, or
+    exfiltrating data it can reach.

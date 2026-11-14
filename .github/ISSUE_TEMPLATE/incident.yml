@@ -1,0 +1,75 @@
+name: Submit an incident
+description: Propose a real-world AI agent incident for review.
+title: "[Incident]: "
+labels: ["incident-submission", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for contributing. Submissions are public. A maintainer will check the sources before anything is published.
+        **Do not include** exploit code, working attack payloads, unpatched vulnerabilities, secrets, or personal data about private individuals.
+  - type: input
+    id: title
+    attributes: { label: Short title, description: "One line, e.g. 'Coding agent deletes production database'." }
+    validations: { required: true }
+  - type: dropdown
+    id: track
+    attributes:
+      label: Track
+      options:
+        - "cause: the agent itself caused harm"
+        - "target: an attacker manipulated the agent"
+        - "Not sure"
+    validations: { required: true }
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category (best guess)
+      options:
+        - unauthorized-action
+        - data-destruction
+        - deceptive-reporting
+        - service-disruption
+        - prompt-injection
+        - tool-hijacking
+        - credential-theft
+        - data-exfiltration
+        - Not sure
+    validations: { required: true }
+  - type: input
+    id: date
+    attributes: { label: Date of incident (or first public report), placeholder: YYYY-MM-DD }
+    validations: { required: true }
+  - type: input
+    id: agent
+    attributes: { label: Agent or product involved }
+    validations: { required: true }
+  - type: input
+    id: vendor
+    attributes: { label: Vendor (if known) }
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: 2-4 sentences in your own words. Please do not paste long quotations.
+    validations: { required: true }
+  - type: textarea
+    id: impact
+    attributes: { label: Impact, description: "Who or what was affected, and how?" }
+    validations: { required: true }
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: One public URL per line. Primary sources (vendor post-mortems, advisories, first-hand accounts) are best.
+      placeholder: https://...
+    validations: { required: true }
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: My submission contains no exploit code, attack payloads, secrets, or private personal data.
+          required: true
+        - label: I understand submissions are public and that published content is licensed CC BY 4.0.
+          required: true

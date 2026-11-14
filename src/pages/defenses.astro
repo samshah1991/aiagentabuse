@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadDefenses, loadCategories } from '../lib/site';
+const defenses = loadDefenses();
+const cats = Object.fromEntries(loadCategories().map((c: any) => [c.id, c]));
+---
+<Base title="Defenses" description="Eight practical checklists for defending against AI agent incidents, each mapped to the incident categories and OWASP risks it helps prevent.">
+  <h1>Defenses</h1>
+  <p class="prose">Eight checklists, one per major risk. Each one lists the incident categories it helps prevent. This is defensive guidance only: the site does not publish exploit code or working attack payloads.</p>
+  <nav aria-label="Checklists" class="prose"><ol>{defenses.map((d: any) => <li><a href={`#${d.id}`}>{d.title}</a></li>)}</ol></nav>
+  <div class="cards">
+    {defenses.map((d: any) => (
+      <section class="card" id={d.id} aria-labelledby={`${d.id}-h`}>
+        <h2 id={`${d.id}-h`}>{d.title}</h2>
+        <p class="muted small">Risk: {d.risk}. OWASP: {d.owasp.join(', ')}</p>
+        <ul class="checklist">{d.items.map((item: string) => <li>{item}</li>)}</ul>
+        <p class="small"><strong>Prevents:</strong>{' '}
+          {d.prevents.map((c: string, n: number) => <>{n > 0 && ', '}<a href={`/incidents/?category=${c}`}>{cats[c].name}</a> <span class="muted">({cats[c].track})</span></>)}
+        </p>
+      </section>
+    ))}
+  </div>
+</Base>

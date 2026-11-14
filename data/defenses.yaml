@@ -1,0 +1,94 @@
+# Defensive checklists. One per major risk category.
+# `prevents` lists the incident category IDs (data/taxonomy/categories.yaml) each checklist helps prevent.
+# Defensive guidance only: no exploit code or working attack payloads.
+- id: least-privilege
+  title: "Scope the agent's permissions"
+  risk: "Excessive agency and unauthorized actions"
+  owasp: [LLM06, ASI03]
+  prevents: [unauthorized-action, credential-theft]
+  items:
+    - "Give each agent its own identity; never reuse a human's personal credentials."
+    - "Grant the narrowest scopes per task, and prefer read-only by default."
+    - "Use short-lived, task-bound tokens instead of long-lived keys."
+    - "Separate development, staging, and production credentials; keep production out of reach unless required."
+    - "Maintain an allowlist of tools and actions; deny everything else."
+    - "Review granted permissions on a schedule and remove unused ones."
+- id: human-approval
+  title: "Require human approval for consequential actions"
+  risk: "Irreversible or high-impact actions taken without oversight"
+  owasp: [LLM06, ASI09]
+  prevents: [unauthorized-action, data-destruction]
+  items:
+    - "Define which actions are consequential (payments, deletions, deployments, external messages, permission changes)."
+    - "Require explicit confirmation for those actions, showing the exact action and target."
+    - "Make the approval step impossible for the agent to skip or self-approve."
+    - "Enforce change freezes at the platform level, not only in the agent's instructions."
+    - "Log every approval with who approved, when, and what was approved."
+- id: reversibility
+  title: "Make destructive actions recoverable"
+  risk: "Data loss and infrastructure damage"
+  owasp: [ASI02, ASI05]
+  prevents: [data-destruction, service-disruption]
+  items:
+    - "Run agents against copies, branches, or sandboxes rather than live systems where possible."
+    - "Keep tested, automated backups with restore drills; store them where the agent cannot delete them."
+    - "Prefer soft-delete and versioned storage for anything an agent can modify."
+    - "Execute agent-generated code in an isolated sandbox with no network or secret access by default."
+    - "Block destructive commands at the tool layer unless an approved change ticket is attached."
+- id: honest-reporting
+  title: "Verify what the agent says it did"
+  risk: "False, fabricated, or concealed results"
+  owasp: [LLM09, ASI09, ASI10]
+  prevents: [deceptive-reporting]
+  items:
+    - "Treat an agent's self-report as a claim; check outcomes against independent system logs."
+    - "Record every tool call and its raw result in an append-only audit log the agent cannot edit."
+    - "Surface failed or skipped steps prominently instead of only showing a summary."
+    - "Run automated checks (tests, diffs, record counts) before accepting a completed task."
+    - "Train reviewers to expect confident but wrong output and to check sources."
+- id: resource-limits
+  title: "Bound loops, spend, and blast radius"
+  risk: "Outages, runaway loops, and unexpected cost"
+  owasp: [LLM10, ASI08]
+  prevents: [service-disruption]
+  items:
+    - "Set hard caps on steps, tool calls, tokens, run time, and spend per task and per day."
+    - "Add a kill switch that stops all agent activity immediately and is tested regularly."
+    - "Rate-limit agent access to shared services and APIs."
+    - "Isolate agents so one failure cannot cascade through other agents or systems."
+    - "Alert humans when usage deviates sharply from a baseline."
+- id: untrusted-content
+  title: "Treat all external content as untrusted data"
+  risk: "Prompt injection and goal hijack"
+  owasp: [LLM01, ASI01, ASI06]
+  prevents: [prompt-injection, data-exfiltration]
+  items:
+    - "Assume any text the agent reads (web pages, emails, files, issues, tool output) may contain instructions."
+    - "Keep untrusted content clearly separated from trusted instructions and mark its origin."
+    - "Reduce the agent's permissions automatically after it has read untrusted content in a session."
+    - "Avoid giving one agent untrusted input, private data access, and an outbound channel at the same time."
+    - "Do not let content write to long-term memory without validation and review."
+    - "Test regularly with an internal red team using your own safe, non-destructive test cases."
+- id: tool-supply-chain
+  title: "Vet tools, plugins, and integrations"
+  risk: "Tool hijacking and supply-chain compromise"
+  owasp: [LLM03, ASI02, ASI04, ASI07]
+  prevents: [tool-hijacking]
+  items:
+    - "Install tools and servers only from sources you trust; pin versions and verify integrity."
+    - "Review tool descriptions and metadata, since agents read them as instructions."
+    - "Alert on changes to a tool's description, permissions, or behavior after approval."
+    - "Validate tool inputs and outputs against strict schemas."
+    - "Authenticate and authorize messages between agents; never trust a peer agent by default."
+- id: secrets-and-egress
+  title: "Protect secrets and control outbound data"
+  risk: "Credential theft and data exfiltration"
+  owasp: [LLM02, LLM05, LLM07, ASI03]
+  prevents: [credential-theft, data-exfiltration]
+  items:
+    - "Keep secrets out of prompts, context windows, and system instructions."
+    - "Inject credentials at the network or tool layer so the model never sees raw values."
+    - "Restrict outbound network access to an allowlist of required hosts."
+    - "Sanitize agent output before rendering it (for example, block auto-loading external images and links)."
+    - "Scan agent output and logs for secrets and personal data before they leave your systems."
+    - "Rotate any credential an agent may have exposed, and monitor for its use."
