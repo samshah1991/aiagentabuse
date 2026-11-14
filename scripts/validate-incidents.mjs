@@ -3,6 +3,9 @@
 // Usage: node scripts/validate-incidents.mjs [file-or-dir ...]   (default: data/incidents)
 import { statSync } from 'node:fs';
 import { relative } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { readYaml } from '../agent/util.mjs';
+import { validateEvidenceFile } from '../agent/schema.mjs';
 import { loadTracks, loadCategories, loadOwasp, loadDefenses, incidentFiles, loadIncident, validateIncident, ROOT } from './lib/data.mjs';
 
 const taxonomy = { tracks: loadTracks(), categories: loadCategories(), owasp: loadOwasp() };
@@ -38,6 +41,22 @@ for (const d of loadDefenses()) for (const c of d.prevents ?? []) {
   covered.add(c);
 }
 for (const c of catIds) if (!covered.has(c)) { failed++; console.error(`✗ data/defenses.yaml: category "${c}" has no checklist`); }
+
+// data/categories.yaml (agent research targets) must match data/defenses.yaml; evidence files must match the schema.
+const defIds = loadDefenses().map((d) => d.id);
+const agentIds = readYaml('data/categories.yaml').map((c) => c.id);
+for (const id of defIds) if (!agentIds.includes(id)) { failed++; console.error(`✗ data/categories.yaml: missing defense "${id}"`); }
+for (const id of agentIds) if (!defIds.includes(id)) { failed++; console.error(`✗ data/categories.yaml: "${id}" is not in data/defenses.yaml`); }
+if (existsSync('data/evidence')) for (const f of readdirSync('data/evidence').filter((x) => x.endsWith('.json'))) {
+  try {
+    const doc = JSON.parse(readFileSync(`data/evidence/${f}`, 'utf8'));
+    const errs = validateEvidenceFile(doc);
+    if (f !== `${doc.category}.json`) errs.push('file name must match category');
+    if (!defIds.includes(doc.category)) errs.push(`unknown category "${doc.category}"`);
+    if (errs.length) { failed++; console.error(`✗ data/evidence/${f}`); errs.slice(0, 5).forEach((e) => console.error(`    - ${e}`)); }
+    else console.log(`✓ data/evidence/${f}`);
+  } catch (e) { failed++; console.error(`✗ data/evidence/${f}: ${e.message}`); }
+}
 
 if (failed) { console.error(`\nValidation failed: ${failed} problem file(s).`); process.exit(1); }
 console.log(`\nValidation passed: ${files.length} incident file(s).`);

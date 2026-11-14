@@ -9,9 +9,14 @@
     "validate": "node scripts/validate-incidents.mjs",
     "dev": "astro dev",
     "build": "npm run validate && astro build && pagefind --site dist",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "agent": "node agent/index.mjs",
+    "agent:dry": "node agent/index.mjs --dry-run",
+    "test": "node --test \"agent/test/*.test.mjs\""
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0",
+    "ajv": "^8.20.0",
     "astro": "^7.4.12",
     "js-yaml": "^5.5.0",
     "pagefind": "^1.6.0"

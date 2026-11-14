@@ -1,5 +1,5 @@
 // Shared data loader and validator. Used by the build-time validator and by the Astro site.
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
 import { load, CORE_SCHEMA } from 'js-yaml';
 
@@ -92,3 +92,9 @@ export function validateIncident(inc, { tracks, categories, owasp }) {
   }
   return errors;
 }
+
+// Evidence summary for a defense category, if the evidence agent has produced one that a human merged.
+export const loadEvidence = (id) => {
+  const f = join(DATA, 'evidence', `${id}.json`);
+  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')) : null;
+};

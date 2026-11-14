@@ -1,0 +1,35 @@
+# Defense categories researched by the evidence agent (agent/).
+# Keep ids in sync with data/defenses.yaml; `npm run validate` checks this.
+# `hints` are search starting points, not conclusions.
+- id: least-privilege
+  title: "Scope the agent's permissions"
+  risk: "Excessive agency and unauthorized actions"
+  hints: "least privilege for AI agents; scoped tokens; agent identity and authorization; excessive agency evaluation"
+- id: human-approval
+  title: "Require human approval for consequential actions"
+  risk: "Irreversible or high-impact actions taken without oversight"
+  hints: "human-in-the-loop approval for agent actions; approval fatigue; confirmation prompts effectiveness"
+- id: reversibility
+  title: "Make destructive actions recoverable"
+  risk: "Data loss and infrastructure damage"
+  hints: "sandboxing agent code execution; backups and rollback for agents; destructive command guardrails"
+- id: honest-reporting
+  title: "Verify what the agent says it did"
+  risk: "False, fabricated, or concealed results"
+  hints: "verifying agent self-reports; agent audit logs; LLM deception and fabricated results evaluation"
+- id: resource-limits
+  title: "Bound loops, spend, and blast radius"
+  risk: "Outages, runaway loops, and unexpected cost"
+  hints: "agent budget limits; runaway agent loops; rate limiting; kill switches; unbounded consumption"
+- id: untrusted-content
+  title: "Treat all external content as untrusted data"
+  risk: "Prompt injection and goal hijack"
+  hints: "prompt injection defenses benchmark; indirect prompt injection; AgentDojo; instruction hierarchy; spotlighting"
+- id: tool-supply-chain
+  title: "Vet tools, plugins, and integrations"
+  risk: "Tool hijacking and supply-chain compromise"
+  hints: "MCP server security; tool poisoning; malicious plugins; agent supply chain attacks; tool description integrity"
+- id: secrets-and-egress
+  title: "Protect secrets and control outbound data"
+  risk: "Credential theft and data exfiltration"
+  hints: "secret leakage from LLM agents; egress filtering for agents; data exfiltration via agents; credential isolation"
