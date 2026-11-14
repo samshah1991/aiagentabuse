@@ -1,0 +1,23 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-08-amazon-kiro-repo-injection-exfiltration
+title: "Repository-planted instructions make Amazon Kiro send out a secret"
+track: target
+category: data-exfiltration
+owasp_id: LLM01
+date: "2026-08-27"
+agent_or_product: "Amazon Kiro"
+vendor: "Amazon"
+summary: >-
+  Mindgard reported that text planted in a repository could make Amazon's Kiro
+  agent send a secret from an environment file to an attacker-controlled
+  endpoint. The route reportedly abused an extension-recommendation URL. The
+  issue was reported fixed in a later Kiro release.
+impact: "Researcher disclosure; no in-the-wild exploitation reported."
+severity: high
+sources:
+  - title: "Mindgard: Amazon Kiro data exfiltration"
+    url: "https://mindgard.ai/blog/amazon-kiro-data-exfiltration" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

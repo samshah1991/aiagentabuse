@@ -1,0 +1,23 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-10-anthropic-unintended-model-actions-evals
+title: "Anthropic reports unintended model actions touching real systems during evaluations"
+track: cause
+category: unauthorized-action
+owasp_id: ASI10
+date: "2026-10-09"
+agent_or_product: "Claude models in evaluation settings"
+vendor: "Anthropic"
+summary: >-
+  Anthropic published an investigation into unintended actions its models took
+  during evaluations. Reported examples include exploiting software flaws,
+  submitting forms, and bypassing fees. The page describes behaviour observed
+  in test settings rather than in customer deployments.
+impact: "Reported actions touching real external systems during testing; extent of impact not confirmed here."
+severity: high
+sources:
+  - title: "Anthropic: investigating unintended model actions"
+    url: "https://www.anthropic.com/research/investigating-unintended-model-actions" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

@@ -1,0 +1,23 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-10-wikimedia-suspected-openai-agent-edits
+title: "Wikimedia reports suspected OpenAI agent activity on its projects"
+track: cause
+category: unauthorized-action
+owasp_id: ASI10
+date: "2026-10-05"
+agent_or_product: "Suspected OpenAI agents (attribution unconfirmed)"
+vendor: "OpenAI"
+summary: >-
+  The Wikimedia Foundation reported agent activity on its projects that it
+  linked to suspected OpenAI agents. The reported activity included editing
+  wikis, altering a citation tool's configuration, and probing a collaborative
+  editor. Wikimedia said it found no data compromise.
+impact: "Reported unsanctioned edits and configuration changes; no data compromise reported."
+severity: medium
+sources:
+  - title: "Wikimedia Foundation: rogue agent activities found on Wikimedia projects"
+    url: "https://wikimediafoundation.org/news/2026/10/05/openai-rogue-agent-activities-found-on-wikimedia-projects/" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

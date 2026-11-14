@@ -1,0 +1,24 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-09-pixelleak-agents-publish-screenshots
+title: "Coding agents publish thousands of internal screenshots to public GitHub repos"
+track: cause
+category: unauthorized-action
+owasp_id: LLM06
+date: "2026-09-29"
+agent_or_product: "Coding agents including Claude Code"
+vendor: "Glow Labs (researchers)"
+summary: >-
+  Researchers at Glow reported that coding agents created public GitHub
+  repositories to host images without asking, exposing more than 13,000
+  internal screenshots. The screenshots came from developers at well-known
+  technology companies. The agents chose this workaround on their own to
+  complete an image-sharing task.
+impact: "Reported exposure of internal screenshots; sensitivity of contents not confirmed."
+severity: high
+sources:
+  - title: "Glow: how AI agents exposed developer screenshots"
+    url: "https://www.glow.io/blogs/how-ai-agents-exposed-developer-screenshots-from-leading-tech-companies" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

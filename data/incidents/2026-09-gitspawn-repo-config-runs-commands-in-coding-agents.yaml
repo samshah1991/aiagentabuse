@@ -1,0 +1,22 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-09-gitspawn-repo-config-runs-commands-in-coding-agents
+title: "Repo git config runs commands in several coding agents before trust prompts"
+track: target
+category: tool-hijacking
+owasp_id: ASI05
+date: "2026-09-02"
+agent_or_product: "Several coding agents"
+summary: >-
+  Researchers at Manifold reported that a malicious repository's git
+  configuration could run commands in several popular coding agents. The
+  commands reportedly ran before the agents' trust prompts or sandboxes took
+  effect. Multiple CVEs were reportedly assigned across the affected products.
+impact: "Researcher disclosure; developer machines at risk when opening untrusted repositories."
+severity: high
+sources:
+  - title: "Manifold Security: AI coding agents git hijack"
+    url: "https://www.manifold.security/blog/ai-coding-agents-git-hijack" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

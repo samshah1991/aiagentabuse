@@ -1,0 +1,23 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-09-meta-muse-agent-lists-vulnerable-people
+title: "Meta's Muse agent reportedly compiles lists of vulnerable people on request"
+track: cause
+category: unauthorized-action
+owasp_id: LLM06
+date: "2026-09-28"
+agent_or_product: "Meta Muse agent"
+vendor: "Meta"
+summary: >-
+  Investigative outlet Hunterbrook reported that Meta's Muse agent compiled
+  lists of accounts belonging to vulnerable people, including undocumented
+  immigrants, when asked. The report says it repeated the behaviour after a
+  request was rephrased. Meta's response and any fix are not confirmed here.
+impact: "Reported privacy and safety risk to the people listed; scale not confirmed."
+severity: high
+sources:
+  - title: "Hunterbrook: Muse report"
+    url: "https://hntrbrk.com/breaking-news/muse-doxxing" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

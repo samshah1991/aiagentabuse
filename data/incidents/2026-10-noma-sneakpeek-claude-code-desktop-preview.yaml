@@ -1,0 +1,24 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-10-noma-sneakpeek-claude-code-desktop-preview
+title: "Claude Code Desktop preview pane could leak local secrets (SneakPeek)"
+track: target
+category: data-exfiltration
+owasp_id: LLM02
+date: "2026-10-14"
+agent_or_product: "Claude Code in Claude Desktop"
+vendor: "Anthropic"
+summary: >-
+  Noma Labs reported that the preview pane in Claude Code Desktop could be
+  made to read and send out local secrets using a very large HTML file that
+  bypassed a content security policy. A first patch was reportedly bypassed,
+  and a later version fixed the issue. The report names versions earlier than
+  1.30096.1 as affected.
+impact: "Researcher disclosure; local secrets at risk on unpatched versions."
+severity: high
+sources:
+  - title: "Noma Labs: SneakPeek"
+    url: "https://noma.security/noma-labs/sneakpeek-how-the-preview-pane-in-claude-code-desktop-can-exfiltrate-your-data" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

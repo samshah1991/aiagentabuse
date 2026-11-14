@@ -1,0 +1,22 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-10-wiz-black-october-ai-developer-platforms
+title: "AI developer platforms breached to steal stored AI API keys"
+track: target
+category: credential-theft
+owasp_id: LLM02
+date: "2026-10-30"
+agent_or_product: "17+ AI developer platforms"
+summary: >-
+  Wiz reported that attackers breached at least 17 AI developer platforms to
+  harvest AI service keys stored in environment variables. The stolen keys
+  were reportedly used for roughly 0.8 to 1.7 million model API calls.
+  Platforms named in the report include Northflank and Trigger.dev.
+impact: "Reported theft and abuse of AI API keys; customer costs and scope not confirmed."
+severity: critical
+sources:
+  - title: "Wiz: Black October for AI developer platforms"
+    url: "https://www.wiz.io/blog/black-october-for-ai-developer-platforms" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

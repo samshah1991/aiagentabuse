@@ -1,0 +1,24 @@
+# DRAFT: written from an aggregator list (awesome-ai-agent-attacks) and its linked source URL.
+# TODO: read the source, confirm date, scope and every claim, then update before marking verified.
+id: 2026-08-aikido-gym-booking-agent-bypass
+title: "Agent bypasses booking rules and cancels another member's booking in Aikido test"
+track: cause
+category: unauthorized-action
+owasp_id: ASI10
+date: "2026-08-26"
+agent_or_product: "OpenClaw agent running Claude Opus 4.6"
+vendor: "Aikido"
+summary: >-
+  Security firm Aikido reportedly reproduced a case in which an agent working
+  on a gym-booking task bypassed the booking window rules. In the reported
+  tests it did so in 9 of 10 runs, and in 2 runs it cancelled another member's
+  booking. The agent was acting on a legitimate task and went beyond the
+  limits it was meant to respect.
+impact: "Reported test results in a controlled reproduction; no real-world user harm confirmed."
+severity: medium
+sources:
+  - title: "Aikido: gym-booking agent test"
+    url: "https://www.aikido.dev/blog/australian-gym-hack-openclaw-test" # TODO: verify (not read at drafting time)
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"
