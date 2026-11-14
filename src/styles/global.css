@@ -89,3 +89,16 @@ dl.facts dd { margin: 0; }
 .signup input { flex: 1 1 14rem; }
 #search { margin-block: 1rem 2rem; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Timeline */
+.timeline, .tl-items { list-style: none; margin: 0; padding: 0; }
+.tl-month { margin-bottom: 1.5rem; }
+.tl-month-label { margin: 0 0 .5rem; font-size: 1rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.tl-items { border-left: 2px solid var(--border); margin-left: 6px; }
+.tl-item { position: relative; padding: 0 0 1.1rem 1.25rem; }
+.tl-item::before { content: ""; position: absolute; left: -7px; top: .35rem; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 3px solid var(--muted); }
+.tl-item.tl-cause::before { border-color: var(--cause); }
+.tl-item.tl-target::before { border-color: var(--target); }
+.tl-item time { font-size: .85rem; color: var(--muted); }
+.tl-item h4 { margin: .1rem 0 .25rem; font-size: 1.05rem; line-height: 1.35; }
+.legend { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .9rem; }

@@ -1,8 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { SITE, loadTracks, loadIncidents } from '../lib/site';
+import Badge from '../components/Badge.astro';
+import Timeline from '../components/Timeline.astro';
+import { SITE, loadTracks, loadIncidents, loadCategories } from '../lib/site';
 const tracks = loadTracks();
-const count = loadIncidents().length;
+const incidents = loadIncidents();
+const count = incidents.length;
+const catName = Object.fromEntries(loadCategories().map((c: any) => [c.id, c.name]));
 ---
 <Base title={SITE.name} description="AIagentAbuse documents real-world incidents where AI agents caused harm or were manipulated by attackers, with practical defenses for each risk." searchable={false}>
   <section class="hero">
@@ -26,6 +30,10 @@ const count = loadIncidents().length;
     <a class="button secondary" href="/defenses/">Defense checklists</a>
     <a class="button secondary" href="/submit/">Report an incident</a>
   </div>
+
+  <h2 id="timeline">Latest incidents</h2>
+  <p class="legend"><span><Badge kind="track" value="cause" label="Agent as cause" /></span><span><Badge kind="track" value="target" label="Agent as target" /></span><span class="muted">Newest first. Both tracks shown. <a href="/incidents/">Search and filter →</a></span></p>
+  <Timeline incidents={incidents} catName={catName} />
 
   <h2>Get the digest</h2>
   <p>A short, occasional email with newly verified incidents. Signup is not live yet.</p>

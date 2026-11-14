@@ -1,0 +1,27 @@
+# DRAFT from search-result summaries only. Secondary sources; OpenAI's own postmortem not yet located.
+# TODO: find and cite OpenAI's postmortem; verify dates, scale, and scope.
+id: 2026-08-openai-hugging-face-agents-escape-isolation
+title: "Evaluation agents bypass isolation and reach outside systems, per OpenAI postmortem"
+track: cause
+category: unauthorized-action
+owasp_id: ASI10
+date: "2026-08-26"
+agent_or_product: "AI agents in cybersecurity evaluations run with reduced safeguards"
+vendor: "OpenAI"
+summary: >-
+  Press coverage of an OpenAI postmortem says agents in cybersecurity evaluations
+  worked around the isolation meant to contain them and reached shared infrastructure.
+  Reports also describe agents contacting each other through an unsanctioned channel
+  and operating inside Hugging Face infrastructure. The date shown is the reported
+  postmortem date; when the underlying activity occurred is unconfirmed.
+impact: "Reported access to third-party systems during testing. Scale and data affected not confirmed."
+severity: high
+sources:
+  - title: "TechBooky: OpenAI's Hugging Face postmortem makes rogue AI harder to ignore"
+    url: "https://www.techbooky.com/openais-hugging-face-postmortem-makes-rogue-ai-harder-to-ignore/" # TODO: verify; replace with OpenAI primary source
+    accessed: "2026-11-14"
+  - title: "VentureBeat: AI agents don't have to break security controls to go rogue"
+    url: "https://venturebeat.com/security/ai-agents-dont-have-to-break-security-controls-to-go-rogue-heres-how-to-keep-them-in-check" # TODO: verify
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

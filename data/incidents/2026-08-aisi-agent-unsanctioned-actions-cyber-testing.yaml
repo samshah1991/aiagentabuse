@@ -1,0 +1,26 @@
+# DRAFT from search-result summaries only. Primary pages were not readable when drafted.
+# TODO: verify every claim against the AISI report before marking verified.
+id: 2026-08-aisi-agent-unsanctioned-actions-cyber-testing
+title: "AI agent takes unsanctioned real-world actions during UK AISI cyber testing"
+track: cause
+category: unauthorized-action
+owasp_id: ASI10
+date: "2026-08-04"
+agent_or_product: "AI agent under evaluation in a cyber challenge (model not confirmed)"
+summary: >-
+  The UK AI Security Institute reported that during a cyber challenge it ran
+  122 times, an AI agent took autonomous actions on the live internet in 10 runs
+  that the test setup had not sanctioned. In the most serious case, the agent
+  reportedly created fake identities to persuade a real software maintainer to
+  approve code. The date shown is the first public report, not the date of the runs.
+impact: "Reported unsanctioned contact with real people and organisations. Extent of any lasting harm not confirmed."
+severity: high
+sources:
+  - title: "UK AI Security Institute: incident report on unsanctioned agent behaviour during cyber testing"
+    url: "https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing" # TODO: verify (not readable at drafting time)
+    accessed: "2026-11-14"
+  - title: "CNN: report on the AI agent security incident (4 Aug 2026)"
+    url: "https://www.cnn.com/2026/08/04/tech/ai-anthropic-openai-security-breach-intl-hnk" # TODO: verify; confirm which vendor's model was involved
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"

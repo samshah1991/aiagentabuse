@@ -1,0 +1,23 @@
+# DRAFT from search-result summaries only. Aggregator source; Zenity and Salesforce pages not located.
+# TODO: cite Zenity Labs' write-up and Salesforce's fix notice; confirm date and that this was a researcher demonstration.
+id: 2026-09-salesforce-agentforce-web-form-exfiltration
+title: "Researchers show hidden instructions in a public web form can steer Salesforce Agentforce"
+track: target
+category: data-exfiltration
+owasp_id: LLM01
+date: "2026-09-24"
+agent_or_product: "Salesforce Agentforce"
+vendor: "Salesforce"
+summary: >-
+  Zenity Labs reportedly showed that a sales lead submitted through a public web
+  form could carry hidden instructions that the agent later treated as commands.
+  The technique was described as needing no action from a victim and as able to
+  lead to data leaving the organisation. One secondary summary lists it as fixed.
+impact: "Researcher demonstration; no in-the-wild exploitation confirmed. Data at risk included CRM records."
+severity: high
+sources:
+  - title: "awesome-ai-agent-attacks: curated timeline (secondary aggregator)"
+    url: "https://github.com/webpro255/awesome-ai-agent-attacks" # TODO: replace with Zenity primary source
+    accessed: "2026-11-14"
+verification_status: draft
+last_reviewed: "2026-11-14"
